@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Position — Guía Visual Interactiva</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f14;
+      --surface: #17171f;
+      --surface2: #1e1e28;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #7878a0;
+      --accent: #7c6af5;
+      --accent2: #3ecfcf;
+      --red: #f0596a;
+      --green: #4fd98e;
+      --yellow: #f5b943;
+      --blue: #4fa9f5;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Sora', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 2.5rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header .tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #e8e8f0, #7c6af5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .badge-relative  { background: #2a2560; color: var(--accent); }
+    .badge-absolute  { background: #2a1e1e; color: var(--red); }
+    .badge-fixed     { background: #1e2a1e; color: var(--green); }
+    .badge-sticky    { background: #2a2010; color: var(--yellow); }
+
+    .section-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      border-left: 2px solid var(--border);
+      padding-left: 0.85rem;
+    }
+
+    .section-desc strong { color: var(--text); }
+
+    /* ── DEMO AREA ── */
+    .demo {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .demo-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .demo-label::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .demo-body {
+      padding: 1.25rem;
+    }
+
+    /* ── BOXES ── */
+    .box {
+      width: 100px;
+      height: 80px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      gap: 4px;
+    }
+
+    .box-label {
+      font-size: 9px;
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+    }
+
+    .box-normal {
+      background: var(--surface2);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+    }
+
+    .box-relative { background: #2a2560; border: 1px solid var(--accent); color: var(--accent); }
+    .box-absolute { background: #2a1e1e; border: 1px solid var(--red); color: var(--red); }
+    .box-fixed    { background: #1e2a1e; border: 1px solid var(--green); color: var(--green); }
+    .box-sticky   { background: #2a2010; border: 1px solid var(--yellow); color: var(--yellow); }
+
+    /* ── 1. RELATIVE ── */
+    .relative-flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .box-rel-demo {
+      position: relative;
+      top: 30px;
+      left: 30px;
+    }
+
+    .ghost-box {
+      width: 100px;
+      height: 80px;
+      border-radius: 8px;
+      border: 2px dashed #2a2560;
+      background: transparent;
+      flex-shrink: 0;
+    }
+
+    .arrow-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      position: absolute;
+      white-space: nowrap;
+    }
+
+    .relative-wrapper {
+      position: relative;
+    }
+
+    /* ── 2. ABSOLUTE ── */
+    .absolute-container {
+      position: relative;
+      background: var(--surface2);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      height: 180px;
+      padding: 1rem;
+    }
+
+    .absolute-container p {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .box-abs-demo {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+
+    /* ── 3. FIXED ── */
+    .fixed-mockup {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      overflow: hidden;
+    }
+
+    .browser-bar {
+      background: #1a1a24;
+      height: 30px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 6px;
+    }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-r { background: var(--red); }
+    .dot-y { background: var(--yellow); }
+    .dot-g { background: var(--green); }
+
+    .fake-viewport {
+      position: relative;
+      height: 170px;
+      overflow: hidden;
+    }
+
+    .fake-scroll {
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .fake-scroll::-webkit-scrollbar { width: 5px; }
+    .fake-scroll::-webkit-scrollbar-track { background: transparent; }
+    .fake-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .fake-content {
+      padding: 1rem;
+      padding-right: 5.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 360px;
+    }
+
+    .fake-line {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border);
+    }
+
+    .box-fixed-demo {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 80px;
+      height: 64px;
+      font-size: 10px;
+    }
+
+    /* ── 4. STICKY ── */
+    .sticky-stage {
+      position: relative;
+    }
+
+    .sticky-scroll-area {
+      position: relative;
+      height: 220px;
+      overflow-y: auto;
+      background: var(--surface2);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      scroll-behavior: smooth;
+    }
+
+    .sticky-scroll-area::-webkit-scrollbar { width: 5px; }
+    .sticky-scroll-area::-webkit-scrollbar-track { background: transparent; }
+    .sticky-scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sticky-fixed-ref {
+      position: absolute;
+      top: 0;
+      left: 1rem;
+      right: 1rem;
+      background: #122636;
+      border: 1px solid var(--blue);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .sticky-prelude {
+      margin: 1rem;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #19192a;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .sticky-prelude strong { color: var(--text); }
+
+    .sticky-nav-demo {
+      position: sticky;
+      top: 0;
+      background: #2a2010;
+      border: 1px solid var(--yellow);
+      border-radius: 6px;
+      margin: 0 1rem;
+      padding: 8px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--yellow);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sticky-icon { font-size: 13px; }
+
+    .sticky-content {
+      padding: 0.8rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .content-block {
+      padding: 10px 12px;
+      background: var(--surface);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .content-block strong { color: var(--text); }
+
+    /* ── CODE SNIPPET ── */
+    .code-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .c-prop { color: #4fa9f5; }
+    .c-val  { color: #f5b943; }
+    .c-comment { color: #4a4a6a; }
+
+    /* ── LIVE CONTROLS ── */
+    .playground-controls {
+      margin-top: 0.9rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .controls-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .controls-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .control-reset {
+      border: 1px solid var(--border);
+      background: #12121a;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      border-radius: 6px;
+      padding: 0.4rem 0.65rem;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .control-reset:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .control-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .control-meta label {
+      color: var(--text);
+      text-transform: lowercase;
+    }
+
+    .control-value {
+      color: var(--accent2);
+    }
+
+    .control-inputs {
+      display: grid;
+      grid-template-columns: 1fr 74px;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .control-inputs input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent2);
+      background: transparent;
+    }
+
+    .control-inputs input[type="number"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #13131c;
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.35rem 0.45rem;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .control-inputs input[type="number"]:focus,
+    .control-reset:focus {
+      outline: 2px solid var(--accent2);
+      outline-offset: 1px;
+    }
+
+    /* ── TIP BOXES ── */
+    .tip {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .tip-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tip-r .tip-icon { background: #2a1e1e; color: var(--red); }
+    .tip-b .tip-icon { background: #1e1e2a; color: var(--accent); }
+    .tip-g .tip-icon { background: #1e2a1e; color: var(--green); }
+
+    .tip strong { color: var(--text); }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .compare-cell {
+      background: var(--surface);
+      padding: 1rem 0.85rem;
+    }
+
+    .compare-cell.header {
+      background: var(--surface2);
+    }
+
+    .compare-cell .prop-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .compare-cell .prop-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tag-rel { color: var(--accent); }
+    .tag-abs { color: var(--red); }
+    .tag-fix { color: var(--green); }
+    .tag-sti { color: var(--yellow); }
+
+    .check { color: var(--green); font-size: 13px; }
+    .cross { color: var(--red); font-size: 13px; }
+
+    .row-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      padding: 0.6rem 0.85rem;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      grid-column: 1;
+    }
+
+    /* ── FOOTER NOTE ── */
+    .scroll-hint {
+      text-align: center;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+      .control-inputs {
+        grid-template-columns: 1fr 68px;
+      }
+
+      .controls-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="tag">CSS · Propiedad position</div>
+    <h1>Las 4 posiciones CSS</h1>
+    <p>Guía visual interactiva — relative, absolute, fixed, sticky</p>
+  </header>
+
+  <main>
+
+    <!-- ════════════════════════════════════
+         1. RELATIVE
+    ═════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header">
+        <span class="badge badge-relative">relative</span>
+        <h2>Se mueve, pero conserva su lugar</h2>
+      </div>
+      <p class="section-desc">
+        El elemento se desplaza visualmente desde su posición original,
+        pero <strong>el hueco queda reservado</strong> — como si todavía
+        estuviera ahí. Los demás elementos no lo ignoran.
+      </p>
+
+      <div class="demo">
+        <div class="demo-label">Flujo del documento</div>
+        <div class="demo-body">
+          <div class="relative-wrapper">
+            <div class="relative-flow">
+              <div class="box box-normal"><span>A</span><span class="box-label">normal</span></div>
+              <div class="ghost-box" title="Hueco reservado"></div>
+              <div class="box box-normal"><span>C</span><span class="box-label">normal</span></div>
+            </div>
+            <div id="relative-box-demo" class="box box-relative box-rel-demo" style="margin-top:-80px; margin-left:0">
+              <span>B</span>
+              <span class="box-label">relative</span>
+            </div>
+          </div>
+          <p style="font-size:11px; color:var(--muted); margin-top:2.5rem; font-family:var(--mono);">
+            ↑ B se desplazó top:<span id="rel-note-top">30px</span> left:<span id="rel-note-left">30px</span>, pero el espacio gris punteado sigue reservado para él.
+          </p>
+        </div>
+      </div>
+
+      <div class="playground-controls">
+        <div class="controls-head">
+          <p class="controls-title">Ajusta top y left en vivo</p>
+          <button id="reset-relative" type="button" class="control-reset">Restablecer</button>
+        </div>
+        <div class="controls-grid">
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="rel-top-range">top</label>
+              <span id="rel-top-value" class="control-value">30px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="rel-top-range" type="range" min="0" max="80" step="1" value="30">
+              <input id="rel-top-number" type="number" min="0" max="80" step="1" value="30">
+            </div>
+          </div>
+
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="rel-left-range">left</label>
+              <span id="rel-left-value" class="control-value">30px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="rel-left-range" type="range" min="0" max="80" step="1" value="30">
+              <input id="rel-left-number" type="number" min="0" max="80" step="1" value="30">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="c-prop">.elemento</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">relative</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">top</span>: <span id="code-rel-top" class="c-val">30px</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">left</span>: <span id="code-rel-left" class="c-val">30px</span>;<br>
+        } <span class="c-comment">/* Los vecinos no se mueven */</span>
+      </div>
+
+      <div class="tip tip-b">
+        <div class="tip-icon">i</div>
+        <span><strong>Dato clave:</strong> <code>position: relative</code> en un padre es fundamental para que <code>absolute</code> funcione correctamente (lo verás abajo).</span>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+         2. ABSOLUTE
+    ═════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header">
+        <span class="badge badge-absolute">absolute</span>
+        <h2>Sale del flujo, se ancla al padre</h2>
+      </div>
+      <p class="section-desc">
+        El elemento <strong>desaparece del flujo</strong> — los demás actúan como si no existiera.
+        Se posiciona relativo al ancestro más cercano con <code>position: relative</code>.
+        Si no hay ninguno, se ancla al <code>&lt;body&gt;</code>.
+      </p>
+
+      <div class="demo">
+        <div class="demo-label">Contenedor con position: relative</div>
+        <div class="demo-body">
+          <div class="absolute-container">
+            <p>↖ padre (position: relative)</p>
+            <div id="absolute-box-demo" class="box box-absolute box-abs-demo">
+              <span>ABS</span>
+              <span id="abs-box-label" class="box-label">bottom:10px right:10px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="playground-controls">
+        <div class="controls-head">
+          <p class="controls-title">Ajusta bottom y right en vivo</p>
+          <button id="reset-absolute" type="button" class="control-reset">Restablecer</button>
+        </div>
+        <div class="controls-grid">
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="abs-bottom-range">bottom</label>
+              <span id="abs-bottom-value" class="control-value">10px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="abs-bottom-range" type="range" min="0" max="120" step="1" value="10">
+              <input id="abs-bottom-number" type="number" min="0" max="120" step="1" value="10">
+            </div>
+          </div>
+
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="abs-right-range">right</label>
+              <span id="abs-right-value" class="control-value">10px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="abs-right-range" type="range" min="0" max="160" step="1" value="10">
+              <input id="abs-right-number" type="number" min="0" max="160" step="1" value="10">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="c-prop">.padre</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">relative</span>; <span class="c-comment">/* ancla para el hijo */</span><br>
+        }<br><br>
+        <span class="c-prop">.hijo</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">absolute</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">bottom</span>: <span id="code-abs-bottom" class="c-val">10px</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">right</span>: <span id="code-abs-right" class="c-val">10px</span>;<br>
+        } <span class="c-comment">/* Sale del flujo */</span>
+      </div>
+
+      <div class="tip tip-r">
+        <div class="tip-icon">!</div>
+        <span><strong>Error común:</strong> olvidar <code>position: relative</code> en el padre. El elemento sale volando hasta el <code>&lt;body&gt;</code> o el primer ancestro posicionado.</span>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+         3. FIXED
+    ═════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header">
+        <span class="badge badge-fixed">fixed</span>
+        <h2>Pegado a la ventana del navegador</h2>
+      </div>
+      <p class="section-desc">
+        Ignora el scroll completamente. Se posiciona relativo al
+        <strong>viewport</strong> (la pantalla), no al documento.
+        Siempre visible sin importar cuánto bajes.
+      </p>
+
+      <div class="demo">
+        <div class="demo-label">Simulación de viewport con scroll</div>
+        <div class="demo-body">
+          <div class="fixed-mockup">
+            <div class="browser-bar">
+              <div class="dot dot-r"></div>
+              <div class="dot dot-y"></div>
+              <div class="dot dot-g"></div>
+            </div>
+            <div class="fake-viewport">
+              <div class="fake-scroll">
+                <div class="fake-content">
+                  <div class="fake-line" style="width: 80%"></div>
+                  <div class="fake-line" style="width: 60%"></div>
+                  <div class="fake-line" style="width: 70%"></div>
+                  <div class="fake-line" style="width: 50%"></div>
+                  <div class="fake-line" style="width: 65%"></div>
+                  <div class="fake-line" style="width: 55%"></div>
+                  <div class="fake-line" style="width: 72%"></div>
+                  <div class="fake-line" style="width: 48%"></div>
+                  <div class="fake-line" style="width: 66%"></div>
+                  <div class="fake-line" style="width: 58%"></div>
+                  <div class="fake-line" style="width: 75%"></div>
+                  <div class="fake-line" style="width: 52%"></div>
+                  <div class="fake-line" style="width: 62%"></div>
+                  <div class="fake-line" style="width: 45%"></div>
+                </div>
+              </div>
+              <div id="fixed-box-demo" class="box box-fixed box-fixed-demo">
+                <span>FIXED</span>
+                <span id="fix-box-label" class="box-label">top:12px right:12px</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:11px; color:var(--muted); margin-top:0.75rem; font-family:var(--mono);">
+              ↑ Aunque el contenido haga scroll, el cuadro verde sigue en top:<span id="fix-note-top">12px</span> right:<span id="fix-note-right">12px</span>.
+          </p>
+        </div>
+      </div>
+
+        <div class="playground-controls">
+          <div class="controls-head">
+            <p class="controls-title">Ajusta top y right en vivo</p>
+            <button id="reset-fixed" type="button" class="control-reset">Restablecer</button>
+          </div>
+          <div class="controls-grid">
+            <div class="control-item">
+              <div class="control-meta">
+                <label for="fix-top-range">top</label>
+                <span id="fix-top-value" class="control-value">12px</span>
+              </div>
+              <div class="control-inputs">
+                <input id="fix-top-range" type="range" min="0" max="100" step="1" value="12">
+                <input id="fix-top-number" type="number" min="0" max="100" step="1" value="12">
+              </div>
+            </div>
+
+            <div class="control-item">
+              <div class="control-meta">
+                <label for="fix-right-range">right</label>
+                <span id="fix-right-value" class="control-value">12px</span>
+              </div>
+              <div class="control-inputs">
+                <input id="fix-right-range" type="range" min="0" max="220" step="1" value="12">
+                <input id="fix-right-number" type="number" min="0" max="220" step="1" value="12">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div class="code-block">
+        <span class="c-prop">.botón-flotante</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">fixed</span>;<br>
+          &nbsp;&nbsp;<span class="c-prop">top</span>: <span id="code-fixed-top" class="c-val">12px</span>;<br>
+          &nbsp;&nbsp;<span class="c-prop">right</span>: <span id="code-fixed-right" class="c-val">12px</span>;<br>
+        } <span class="c-comment">/* Relativo al viewport, ignora scroll */</span>
+      </div>
+
+      <div class="tip tip-g">
+        <div class="tip-icon">✓</div>
+        <span><strong>Uso típico:</strong> headers fijos, botones de "volver arriba", chats flotantes, barras de navegación persistentes.</span>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+         4. STICKY
+    ═════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header">
+        <span class="badge badge-sticky">sticky</span>
+        <h2>Normal… hasta que llega al borde</h2>
+      </div>
+      <p class="section-desc">
+        Actúa como <code>relative</code> hasta que el scroll lo acerca al umbral definido.
+        Entonces se comporta como <code>fixed</code> —
+        <strong>pero solo dentro de su contenedor padre</strong>.
+      </p>
+
+      <div class="demo">
+        <div class="demo-label">Haz scroll dentro del recuadro ↓</div>
+        <div class="demo-body">
+          <div class="sticky-stage">
+            <div id="sticky-fixed-ref-demo" class="sticky-fixed-ref">
+              <span class="sticky-icon">🧷</span>
+              <span id="sticky-fixed-label">FIXED (referencia) - top: 0px</span>
+            </div>
+
+            <div class="sticky-scroll-area">
+              <div class="sticky-prelude">
+                <strong>Inicio de flujo</strong><br>
+                Esta caja existe para mostrar que sticky primero se comporta como un bloque normal.
+              </div>
+
+              <div id="sticky-nav-demo" class="sticky-nav-demo">
+                <span class="sticky-icon">📌</span>
+                <span id="sticky-nav-label">STICKY NAV - top: 0px</span>
+              </div>
+
+              <div class="sticky-content">
+                <div class="content-block"><strong>Sección A</strong><br>El bloque azul simula un fixed: está anclado desde el inicio.</div>
+                <div class="content-block"><strong>Sección B</strong><br>El sticky amarillo participa del flujo y solo se pega al llegar al umbral.</div>
+                <div class="content-block"><strong>Sección C</strong><br>A diferencia de fixed, sticky respeta los límites de su padre.</div>
+                <div class="content-block"><strong>Sección D</strong><br>Cuando el contenedor se va del scroll, sticky también desaparece con él.</div>
+                <div class="content-block"><strong>Sección E</strong><br>Fixed permanece anclado al viewport; sticky depende del contenedor.</div>
+                <div class="content-block"><strong>Sección F</strong><br>Prueba distintos top para comparar cuándo y dónde se fijan.</div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:11px; color:var(--muted); margin-top:0.75rem; font-family:var(--mono);">
+            ↑ Amarillo (sticky) usa top:<span id="sticky-note-top">0px</span>; azul (fixed referencia) usa top:<span id="sticky-fixed-note-top">0px</span>.
+          </p>
+        </div>
+      </div>
+
+      <div class="playground-controls">
+        <div class="controls-head">
+          <p class="controls-title">Ajusta top de sticky y fixed</p>
+          <button id="reset-sticky" type="button" class="control-reset">Restablecer</button>
+        </div>
+        <div class="controls-grid">
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="sti-top-range">top (sticky)</label>
+              <span id="sti-top-value" class="control-value">0px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="sti-top-range" type="range" min="0" max="80" step="1" value="0">
+              <input id="sti-top-number" type="number" min="" max="80" step="1" value="0">
+            </div>
+          </div>
+
+          <div class="control-item">
+            <div class="control-meta">
+              <label for="sti-fixed-top-range">top (fixed referencia)</label>
+              <span id="sti-fixed-top-value" class="control-value">0px</span>
+            </div>
+            <div class="control-inputs">
+              <input id="sti-fixed-top-range" type="range" min="35" max="80" step="1" value="0">
+              <input id="sti-fixed-top-number" type="number" min="35" max="80" step="1" value="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="c-prop">.navbar</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">sticky</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">top</span>: <span id="code-sticky-top" class="c-val">0px</span>; <span class="c-comment">/* umbral: se pega aquí */</span><br>
+        } <span class="c-comment">/* Sigue el flujo hasta llegar al límite */</span><br><br>
+        <span class="c-prop">.fixed-referencia</span> {<br>
+        &nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">fixed</span>;<br>
+        &nbsp;&nbsp;<span class="c-prop">top</span>: <span id="code-sticky-fixed-top" class="c-val">0px</span>;<br>
+        } <span class="c-comment">/* Anclado desde el inicio */</span>
+      </div>
+
+      <div class="tip tip-b">
+        <div class="tip-icon">i</div>
+        <span><strong>Importante:</strong> <code>sticky</code> se pega dentro del contenedor con scroll más cercano; <code>fixed</code> se ancla al viewport y no depende de ese contenedor.</span>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+         TABLA COMPARATIVA
+    ═════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header">
+        <span class="badge" style="background:#1a1a26; color:var(--muted)">resumen</span>
+        <h2>Comparativa rápida</h2>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-cell header"><div class="prop-name" style="color:var(--muted)">Propiedad</div></div>
+        <div class="compare-cell header"><div class="prop-name tag-rel">relative</div></div>
+        <div class="compare-cell header"><div class="prop-name tag-abs">absolute</div></div>
+        <div class="compare-cell header"><div class="prop-name tag-fix">fixed</div></div>
+
+        <div class="compare-cell" style="background:var(--surface2)"><div class="prop-desc">¿Sale del flujo?</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="cross">✗</span> No</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="check">✓</span> Sí</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="check">✓</span> Sí</div></div>
+
+        <div class="compare-cell" style="background:var(--surface2)"><div class="prop-desc">Referencia</div></div>
+        <div class="compare-cell"><div class="prop-desc">Posición original</div></div>
+        <div class="compare-cell"><div class="prop-desc">Padre posicionado</div></div>
+        <div class="compare-cell"><div class="prop-desc">Viewport</div></div>
+
+        <div class="compare-cell" style="background:var(--surface2)"><div class="prop-desc">¿Sigue el scroll?</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="check">✓</span> Sí</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="check">✓</span> Sí</div></div>
+        <div class="compare-cell"><div class="prop-desc"><span class="cross">✗</span> No</div></div>
+
+        <div class="compare-cell" style="background:var(--surface2)"><div class="prop-desc">Uso típico</div></div>
+        <div class="compare-cell"><div class="prop-desc">Anclar hijos, ajuste fino</div></div>
+        <div class="compare-cell"><div class="prop-desc">Badges, tooltips, dropdowns</div></div>
+        <div class="compare-cell"><div class="prop-desc">Header fijo, chat, botones</div></div>
+      </div>
+
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.85rem 1rem; font-size:12px; color:var(--muted); font-family:var(--mono);">
+        <span style="color:var(--yellow); font-weight:600;">sticky</span> &nbsp;=&nbsp;
+        <span style="color:var(--accent)">relative</span> + <span style="color:var(--green)">fixed</span> combinados — flujo normal hasta cruzar el umbral, luego se pega.
+      </div>
+    </section>
+
+  </main>
+
+  <div class="scroll-hint">
+   chuleta para el saul
+  </div>
+
+  <script>
+    (function () {
+      const sectionConfig = {
+        relative: {
+          resetButtonId: 'reset-relative',
+          controls: [
+            {
+              rangeId: 'rel-top-range',
+              numberId: 'rel-top-number',
+              targetId: 'relative-box-demo',
+              prop: 'top',
+              outputIds: ['rel-top-value', 'rel-note-top', 'code-rel-top'],
+              defaultValue: 30
+            },
+            {
+              rangeId: 'rel-left-range',
+              numberId: 'rel-left-number',
+              targetId: 'relative-box-demo',
+              prop: 'left',
+              outputIds: ['rel-left-value', 'rel-note-left', 'code-rel-left'],
+              defaultValue: 30
+            }
+          ]
+        },
+        absolute: {
+          resetButtonId: 'reset-absolute',
+          controls: [
+            {
+              rangeId: 'abs-bottom-range',
+              numberId: 'abs-bottom-number',
+              targetId: 'absolute-box-demo',
+              prop: 'bottom',
+              outputIds: ['abs-bottom-value', 'code-abs-bottom'],
+              defaultValue: 10
+            },
+            {
+              rangeId: 'abs-right-range',
+              numberId: 'abs-right-number',
+              targetId: 'absolute-box-demo',
+              prop: 'right',
+              outputIds: ['abs-right-value', 'code-abs-right'],
+              defaultValue: 10
+            }
+          ]
+        },
+        fixed: {
+          resetButtonId: 'reset-fixed',
+          controls: [
+            {
+              rangeId: 'fix-top-range',
+              numberId: 'fix-top-number',
+              targetId: 'fixed-box-demo',
+              prop: 'top',
+              outputIds: ['fix-top-value', 'fix-note-top', 'code-fixed-top'],
+              defaultValue: 12
+            },
+            {
+              rangeId: 'fix-right-range',
+              numberId: 'fix-right-number',
+              targetId: 'fixed-box-demo',
+              prop: 'right',
+              outputIds: ['fix-right-value', 'fix-note-right', 'code-fixed-right'],
+              defaultValue: 12
+            }
+          ]
+        },
+        sticky: {
+          resetButtonId: 'reset-sticky',
+          controls: [
+            {
+              rangeId: 'sti-top-range',
+              numberId: 'sti-top-number',
+              targetId: 'sticky-nav-demo',
+              prop: 'top',
+              outputIds: ['sti-top-value', 'code-sticky-top', 'sticky-note-top'],
+              defaultValue: 0
+            },
+            {
+              rangeId: 'sti-fixed-top-range',
+              numberId: 'sti-fixed-top-number',
+              targetId: 'sticky-fixed-ref-demo',
+              prop: 'top',
+              outputIds: ['sti-fixed-top-value', 'code-sticky-fixed-top', 'sticky-fixed-note-top'],
+              defaultValue: 0
+            }
+          ]
+        }
+      };
+
+      const compositeUpdaters = {
+        absolute: function () {
+          const bottom = document.getElementById('abs-bottom-range').value;
+          const right = document.getElementById('abs-right-range').value;
+          document.getElementById('abs-box-label').textContent = 'bottom:' + bottom + 'px right:' + right + 'px';
+        },
+        fixed: function () {
+          const top = document.getElementById('fix-top-range').value;
+          const right = document.getElementById('fix-right-range').value;
+          document.getElementById('fix-box-label').textContent = 'top:' + top + 'px right:' + right + 'px';
+        },
+        sticky: function () {
+          const stickyTop = document.getElementById('sti-top-range').value;
+          const fixedTop = document.getElementById('sti-fixed-top-range').value;
+          document.getElementById('sticky-nav-label').textContent = 'STICKY NAV - top: ' + stickyTop + 'px';
+          document.getElementById('sticky-fixed-label').textContent = 'FIXED (referencia) - top: ' + fixedTop + 'px';
+        }
+      };
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function isTransitionalNumber(value) {
+        return value === '';
+      }
+
+      function initializeSection(sectionName, section) {
+        const preparedControls = section.controls
+          .map(function (control) {
+            const rangeEl = document.getElementById(control.rangeId);
+            const numberEl = document.getElementById(control.numberId);
+            const targetEl = document.getElementById(control.targetId);
+
+            if (!rangeEl || !numberEl || !targetEl) {
+              return null;
+            }
+
+            const outputEls = (control.outputIds || [])
+              .map(function (id) { return document.getElementById(id); })
+              .filter(Boolean);
+
+            return {
+              rangeEl: rangeEl,
+              numberEl: numberEl,
+              targetEl: targetEl,
+              outputEls: outputEls,
+              prop: control.prop,
+              defaultValue: control.defaultValue
+            };
+          })
+          .filter(Boolean);
+
+        function applyValue(control, rawValue) {
+          const min = Number(control.rangeEl.min);
+          const max = Number(control.rangeEl.max);
+          const numericValue = Number(rawValue);
+          const currentValue = Number(control.rangeEl.value);
+          const baseValue = Number.isFinite(numericValue)
+            ? numericValue
+            : (Number.isFinite(currentValue) ? currentValue : control.defaultValue);
+          const safeValue = clamp(Math.round(baseValue), min, max);
+
+          control.rangeEl.value = String(safeValue);
+          control.numberEl.value = String(safeValue);
+          control.targetEl.style[control.prop] = safeValue + 'px';
+
+          control.outputEls.forEach(function (outputEl) {
+            outputEl.textContent = safeValue + 'px';
+          });
+        }
+
+        preparedControls.forEach(function (control) {
+          control.rangeEl.addEventListener('input', function (event) {
+            applyValue(control, event.target.value);
+            if (compositeUpdaters[sectionName]) {
+              compositeUpdaters[sectionName]();
+            }
+          });
+
+          control.numberEl.addEventListener('input', function (event) {
+            if (isTransitionalNumber(event.target.value)) {
+              return;
+            }
+
+            applyValue(control, event.target.value);
+            if (compositeUpdaters[sectionName]) {
+              compositeUpdaters[sectionName]();
+            }
+          });
+
+          control.numberEl.addEventListener('blur', function (event) {
+            if (isTransitionalNumber(event.target.value)) {
+              event.target.value = control.rangeEl.value;
+            }
+
+            applyValue(control, event.target.value);
+            if (compositeUpdaters[sectionName]) {
+              compositeUpdaters[sectionName]();
+            }
+          });
+
+          applyValue(control, control.defaultValue);
+        });
+
+        const resetButton = document.getElementById(section.resetButtonId);
+        if (resetButton) {
+          resetButton.addEventListener('click', function () {
+            preparedControls.forEach(function (control) {
+              applyValue(control, control.defaultValue);
+            });
+            if (compositeUpdaters[sectionName]) {
+              compositeUpdaters[sectionName]();
+            }
+          });
+        }
+
+        if (compositeUpdaters[sectionName]) {
+          compositeUpdaters[sectionName]();
+        }
+      }
+
+      Object.keys(sectionConfig).forEach(function (sectionName) {
+        initializeSection(sectionName, sectionConfig[sectionName]);
+      });
+    })();
+  </script>
+
+</body>
+</html>
